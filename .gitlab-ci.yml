@@ -1,0 +1,42 @@
+stages:
+  - pull
+  - install
+  - build
+
+variables:
+  IMAGE_NAME: isi_burger
+
+
+pull_code:
+  stage: pull
+  script:
+    - echo "Code récupéré depuis GitHub"
+    - git checkout diallo_fatoumata_diarra_burger
+  only:
+    - diallo_fatoumata_diarra_burger
+
+
+install_dependencies:
+  stage: install
+  image: composer:latest
+  script:
+    - composer install --optimize-autoloader --no-dev
+    - cp .env.example .env
+    - php artisan key:generate
+  artifacts:
+    paths:
+      - vendor/
+  only:
+    - diallo_fatoumata_diarra_burger
+
+# Étape 3 : Build de l'image Docker
+build_docker:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker build -t $IMAGE_NAME:latest .
+    - echo "Image Docker construite avec succès"
+  only:
+    - diallo_fatoumata_diarra_burger
