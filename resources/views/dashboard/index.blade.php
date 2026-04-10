@@ -28,16 +28,16 @@
         </div>
     </div>
 
-    {{-- Graphiques --}}
+
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
 
-        {{-- Commandes par mois --}}
+
         <div class="bg-white rounded-2xl shadow p-6">
             <h2 class="text-lg font-bold text-gray-800 mb-4">Commandes par mois</h2>
             <canvas id="commandesParMois" height="120"></canvas>
         </div>
 
-        {{-- Produits par catégorie --}}
+
         <div class="bg-white rounded-2xl shadow p-6">
             <h2 class="text-lg font-bold text-gray-800 mb-4">Produits vendus par catégorie (ce mois)</h2>
             <canvas id="produitsParCategorie" height="80"></canvas>
@@ -45,7 +45,7 @@
 
     </div>
 
-    {{-- Commandes récentes --}}
+
     <div class="bg-white rounded-2xl shadow p-6">
         <h2 class="text-lg font-bold text-gray-800 mb-4">Commandes récentes</h2>
         <table class="w-full text-sm">

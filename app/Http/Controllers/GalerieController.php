@@ -9,7 +9,7 @@ class GalerieController extends Controller
 {
     public function index()
     {
-        $produits = Menu::paginate(4); // récupère tous les produits pour la galerie
+        $produits = Menu::paginate(4);
         return view('gallery', compact('produits'));
     }
 }

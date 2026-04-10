@@ -47,7 +47,7 @@ class CommandeController extends Controller
 
         $commande->load(['details.burger', 'user']);
 
-        // Email confirmation au client
+
         try {
             Mail::to($commande->user->email)
                 ->send(new CommandeConfirmationMail($commande));
@@ -56,7 +56,7 @@ class CommandeController extends Controller
             Log::error('Erreur email confirmation : ' . $e->getMessage());
         }
 
-        // Notification au gestionnaire
+
         try {
             Mail::to(config('mail.manager_email'))
                 ->send(new NouvelleCommandeManagerMail($commande));

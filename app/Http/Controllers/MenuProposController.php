@@ -9,7 +9,7 @@ class MenuProposController extends Controller
 {
     public function index()
     {
-        $menus = Menu::all(); // récupère tous les menus
-        return view('menu', compact('menus')); // transmet $menus à la vue
+        $menus = Menu::all();
+        return view('menu', compact('menus'));
     }
 }

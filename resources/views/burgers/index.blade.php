@@ -2,17 +2,17 @@
 
 @section('content')
 
-    {{-- TITRE --}}
+
     <div class="text-center py-10">
         <h2 class="text-3xl font-black uppercase tracking-wide text-gray-800">Our Burgers</h2>
         <p class="text-gray-500 mt-1 text-sm">Click on a burger to see the details</p>
     </div>
 
-    {{-- FILTRES --}}
+
     <form method="GET" action="{{ route('burgers.index') }}"
           class="max-w-6xl mx-auto px-6 mb-8 flex flex-wrap gap-3 items-center">
 
-        {{-- Recherche par libellé --}}
+
         <div class="flex-1 min-w-[200px]">
             <input type="text"
                    name="search"
@@ -21,7 +21,7 @@
                    class="w-full border border-gray-300 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#c17f3a]">
         </div>
 
-        {{-- Filtre par catégorie --}}
+
         <div>
             <select name="category"
                     class="border border-gray-300 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#c17f3a]">
@@ -34,7 +34,7 @@
             </select>
         </div>
 
-        {{-- Filtre par prix --}}
+
         <div>
             <select name="prix"
                     class="border border-gray-300 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#c17f3a]">
@@ -44,13 +44,13 @@
             </select>
         </div>
 
-        {{-- Bouton filtrer --}}
+
         <button type="submit"
                 class="bg-[#c17f3a] hover:bg-[#a96d2e] text-white px-6 py-2 rounded-full text-sm font-semibold transition">
             Filter
         </button>
 
-        {{-- Bouton reset --}}
+
         @if(request('search') || request('category') || request('prix'))
             <a href="{{ route('burgers.index') }}"
                class="text-sm text-gray-500 hover:text-gray-700 underline">
@@ -60,7 +60,7 @@
 
     </form>
 
-    {{-- RÉSULTAT --}}
+
     @if($burgers->isEmpty())
         <div class="text-center text-gray-400 py-20">
             <p class="text-xl">No burgers found.</p>
@@ -68,7 +68,7 @@
         </div>
     @else
 
-        {{-- GRILLE --}}
+
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 px-6 max-w-6xl mx-auto pb-20">
             @foreach ($burgers as $burger)
                 <div onclick="ouvrirModal({{ $burger->id }}, '{{ addslashes($burger->name) }}', '{{ addslashes($burger->description) }}', {{ $burger->price }}, '{{ asset('storage/burgers/' . $burger->image) }}')"
@@ -87,7 +87,7 @@
 
     @endif
 
-    {{-- MODAL DÉTAIL --}}
+
     <div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl p-6 w-11/12 max-w-md z-30 hidden text-center shadow-xl" id="modal">
 
         <img id="modalImage" class="w-44 h-44 object-contain mx-auto my-3">
@@ -95,7 +95,7 @@
         <p id="modalDescription" class="text-gray-500 text-sm mt-2 mb-4"></p>
         <span id="modalPrix" class="text-[#c17f3a] text-2xl font-black"></span>
 
-        {{-- Quantité --}}
+
         <div class="flex justify-center gap-4 my-4">
             <button onclick="diminuer()" class="bg-gray-100 hover:bg-gray-200 w-9 h-9 rounded font-bold text-lg">−</button>
             <span id="quantite" class="text-lg font-bold w-8 text-center">1</span>

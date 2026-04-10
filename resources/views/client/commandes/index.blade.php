@@ -5,37 +5,37 @@
     <div class="max-w-4xl mx-auto px-6 py-10">
 
         <h2 class="text-3xl font-black uppercase tracking-wide text-gray-800 mb-8">
-            Mes Commandes
+            My Orders
         </h2>
 
         @if ($commandes->isEmpty())
-            {{-- Aucune commande --}}
+
             <div class="text-center py-20">
-                <p class="text-5xl mb-4">🍔</p>
-                <p class="text-gray-500">Vous n'avez pas encore de commande.</p>
+                <p class="text-5xl mb-4"><i class="fa-solid fa-burger"></i></p>
+                <p class="text-gray-500">You do not have a order </p>
                 <a href="{{ route('burgers.index') }}"
                    class="inline-block mt-4 bg-[#c17f3a] hover:bg-[#a96d2e] text-white px-8 py-3 rounded-full font-semibold transition text-sm">
-                    Commander maintenant
+                    Order now
                 </a>
             </div>
 
         @else
-            {{-- Liste des commandes --}}
+
             <div class="flex flex-col gap-6">
 
                 @foreach ($commandes as $commande)
                     <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
 
-                        {{-- En-tête de la commande --}}
+
                         <div class="flex items-center justify-between px-6 py-4 border-b">
                             <div>
-                                <p class="font-black text-gray-800">Commande #{{ $commande->id }}</p>
+                                <p class="font-black text-gray-800">Order #{{ $commande->id }}</p>
                                 <p class="text-gray-400 text-xs mt-1">
                                     {{ $commande->created_at->format('d/m/Y à H:i') }}
                                 </p>
                             </div>
 
-                            {{-- Statut --}}
+
                             @php
                                 $statuts = [
                                     'en_attente'     => ['label' => 'En attente',     'class' => 'bg-yellow-100 text-yellow-700'],
@@ -52,7 +52,7 @@
                         </span>
                         </div>
 
-                        {{-- Détails des burgers --}}
+
                         <div class="px-6 py-4">
                             @foreach ($commande->details as $detail)
                                 <div class="flex items-center gap-4 py-2 border-b last:border-0">
@@ -70,7 +70,7 @@
                             @endforeach
                         </div>
 
-                        {{-- Total --}}
+
                         <div class="flex justify-between items-center px-6 py-4 bg-gray-50">
                             <span class="text-sm text-gray-500">Total</span>
                             <span class="font-black text-[#c17f3a] text-lg">FCFA {{ $commande->total_price }}</span>

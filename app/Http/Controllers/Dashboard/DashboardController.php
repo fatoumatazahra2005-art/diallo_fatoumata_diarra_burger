@@ -25,7 +25,7 @@ class DashboardController extends Controller
             ->sum('amount');
         $commandesRecentes   = Commande::with('user')->latest()->take(5)->get();
 
-        // Nombre de commandes par mois (année en cours)
+
         $commandesParMois = Commande::select(
             DB::raw('EXTRACT(MONTH FROM created_at) as mois'),
             DB::raw('EXTRACT(YEAR FROM created_at) as annee'),
@@ -42,7 +42,7 @@ class DashboardController extends Controller
             $commandesData[(int)$item->mois - 1] = $item->total;
         }
 
-        // Produits vendus par catégorie ce mois-ci
+
         $produitsParCategorie = DetailsCommande::select(
             'categories.name as categorie',
             DB::raw('SUM(details_commandes.quantity) as total')

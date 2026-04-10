@@ -5,7 +5,6 @@
         <h1 class="text-3xl font-bold mb-6 text-center">Our Menu</h1>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {{-- On divise les menus en deux colonnes --}}
             @foreach($menus->chunk(ceil($menus->count() / 2)) as $menuColumn)
                 <div class="flex flex-col space-y-6">
                     @foreach($menuColumn as $menu)

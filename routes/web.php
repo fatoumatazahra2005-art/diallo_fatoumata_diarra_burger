@@ -19,6 +19,10 @@ Route::get('/menu', [MenuProposController::class, 'index'])->name('menu');
 Route::get('/galerie', [GalerieController::class, 'index'])->name('galerie');
 Route::get('/burgers', [BurgerPublicController::class, 'index'])->name('burgers.index');
 
+Route::get('/about_us', function () {
+    return view('about_us');
+})->name('about');
+
 
 Route::post('/commandes', [App\Http\Controllers\CommandeController::class, 'store'])
     ->name('commandes.store');
@@ -39,6 +43,8 @@ Route::middleware(['auth', 'is_client'])->prefix('client')->name('client.')->gro
         'index', 'store', 'show'
     ]);
 });
+
+
 
 
 Route::middleware(['auth', 'is_gestionnaire'])->prefix('dashboard')->name('dashboard.')->group(function () {
