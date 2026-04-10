@@ -20,7 +20,7 @@ pull_code:
 # Étape 2 : Installation des dépendances Laravel
 install_dependencies:
   stage: install
-  image: php:8.2-cli
+  image: php:8.3-cli
   before_script:
     - apt-get update && apt-get install -y git curl zip unzip libpng-dev libonig-dev libxml2-dev
     - docker-php-ext-install pdo_mysql mbstring
