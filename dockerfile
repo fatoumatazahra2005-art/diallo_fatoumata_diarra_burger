@@ -1,55 +1,27 @@
-stages:
-  - pull
-  - install
-  - build
 
-variables:
-  IMAGE_NAME: isi_burger
-  DOCKER_DRIVER: overlay2
-  DOCKER_TLS_CERTDIR: ""
+@"
+FROM php:8.3-fpm
 
-# Étape 1 : Pull du code
-pull_code:
-  stage: pull
-  script:
-    - echo " Code récupéré depuis la branche diallo_fatoumata_diarra_burger"
-    - git log -1 --oneline
-  only:
-    - diallo_fatoumata_diarra_burger
+RUN apt-get update && apt-get install -y \
+    git curl libpng-dev libonig-dev libxml2-dev zip unzip \
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Étape 2 : Installation des dépendances Laravel
-install_dependencies:
-  stage: install
-  image: php:8.3-cli
-  before_script:
-    - apt-get update && apt-get install -y git curl zip unzip libpng-dev libonig-dev libxml2-dev
-    - docker-php-ext-install pdo_mysql mbstring
-    - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-  script:
-    - composer install --optimize-autoloader --no-dev --ignore-platform-reqs
-    - cp .env.example .env
-    - php artisan key:generate
-    - echo "Dépendances installées avec succès"
-  artifacts:
-    paths:
-      - vendor/
-      - .env
-    expire_in: 1 hour
-  only:
-    - diallo_fatoumata_diarra_burger
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Étape 3 : Build de l'image Docker
-build_docker:
-  stage: build
-  image: docker:24.0.5
-  services:
-    - name: docker:24.0.5-dind
-      alias: docker
-  before_script:
-    - docker info
-  script:
-    - docker build -t $IMAGE_NAME:latest .
-    - docker images | grep $IMAGE_NAME
-    - echo " Image Docker $IMAGE_NAME:latest construite avec succès"
-  only:
-    - diallo_fatoumata_diarra_burger
+WORKDIR /var/www
+
+COPY composer.json composer.lock ./
+RUN composer install --optimize-autoloader --no-dev --no-scripts
+
+COPY . .
+
+RUN cp .env.example .env
+RUN php artisan key:generate
+
+RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache \
+    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
+
+EXPOSE 9000
+CMD ["php-fpm"]
+"@ | Set-Content dockerfile
