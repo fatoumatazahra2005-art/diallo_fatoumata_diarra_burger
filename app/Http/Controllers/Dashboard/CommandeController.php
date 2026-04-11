@@ -35,7 +35,7 @@ class CommandeController extends Controller
             return back()->with('error', 'Impossible de modifier une commande payée ou annulée.');
         }
 
-        // Ordre logique des statuts
+
         $ordre = [
             'en_attente'     => 1,
             'en_preparation' => 2,
@@ -47,7 +47,6 @@ class CommandeController extends Controller
         $statusActuel  = $ordre[$commande->status] ?? 0;
         $nouveauStatus = $ordre[$validated['status']] ?? 0;
 
-
         if ($nouveauStatus < $statusActuel && $validated['status'] !== 'annulee') {
             return back()->with('error', 'Impossible de revenir à un statut précédent.');
         }
@@ -55,10 +54,21 @@ class CommandeController extends Controller
         $oldStatus = $commande->status;
         $commande->update($validated);
 
-        // Envoyer facture PDF quand statut passe à "prete"
+        // Envoyer email quand la commande est prête
         if ($validated['status'] === 'prete' && $oldStatus !== 'prete') {
             $commande->load(['user', 'details.burger']);
             Mail::to($commande->user->email)->send(new CommandePreteMail($commande));
+        }
+
+
+        if ($validated['status'] === 'payee' && $oldStatus !== 'payee') {
+            $commande->load(['details.burger']);
+
+            foreach ($commande->details as $detail) {
+                if ($detail->burger) {
+                    $detail->burger->decrement('stock', $detail->quantity);
+                }
+            }
         }
 
         return back()->with('success', 'Statut mis à jour avec succès.');

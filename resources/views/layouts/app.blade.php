@@ -61,7 +61,7 @@
 
     <div class="flex items-center gap-4">
 
-        <!-- PANIER -->
+
         <button onclick="ouvrirPanier()" class="relative text-gray-600 hover:text-[#c17f3a] transition text-xl">
             <i class="fa-solid fa-cart-shopping"></i>
             <span id="cartCount"
@@ -70,7 +70,7 @@
             </span>
         </button>
 
-        <!-- GUEST -->
+
         @guest
             <a href="{{ route('login') }}" class="text-sm text-gray-500 hover:text-gray-900">Connexion</a>
             <a href="{{ route('register') }}"
@@ -79,7 +79,7 @@
             </a>
         @endguest
 
-        <!-- AUTH -->
+
         @auth
             <div class="flex items-center gap-3">
                 <div class="w-9 h-9 bg-[#c17f3a] rounded-full flex items-center justify-center text-white text-sm font-bold">
@@ -98,7 +98,7 @@
 </nav>
 
 
-<!-- MAIN CONTENT -->
+
 <main>
 
     @if(session('success'))
@@ -118,10 +118,10 @@
 </main>
 
 
-<!-- BACKDROP PANIER -->
+
 <div class="fixed inset-0 bg-black bg-opacity-50 z-20 hidden" id="fondSombre" onclick="toutFermer()"></div>
 
-<!-- PANIER -->
+
 <div class="fixed top-0 right-0 h-full w-80 bg-white z-30 flex flex-col translate-x-full transition-transform duration-300 shadow-2xl"
      id="panier">
 
@@ -230,12 +230,19 @@
         localStorage.setItem('panier', JSON.stringify(panier));
         afficherPanier();
     }
-
     function commander() {
         if (panier.length === 0) {
             alert('Votre panier est vide !');
             return;
         }
+
+        // Transformer le panier au format attendu par le contrôleur
+        var burgers = panier.map(function(article) {
+            return {
+                id:       article.id,
+                quantity: article.quantite  // "quantite" → "quantity"
+            };
+        });
 
         fetch('{{ route("commandes.store") }}', {
             method: 'POST',
@@ -243,10 +250,10 @@
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
             },
-            body: JSON.stringify({ panier: panier })
+            body: JSON.stringify({ burgers: burgers })  // "panier" → "burgers"
         })
-            .then(res => res.json())
-            .then(data => {
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
                 if (data.commande_id) {
                     panier = [];
                     localStorage.removeItem('panier');
@@ -254,7 +261,7 @@
                     toutFermer();
                     alert('Commande passée avec succès !');
                 } else {
-                    alert(data.message);
+                    alert(data.message || 'Une erreur est survenue.');
                 }
             });
     }

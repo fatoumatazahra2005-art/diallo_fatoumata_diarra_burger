@@ -31,13 +31,14 @@ class CommandeClientController extends Controller
             'burgers.*.quantity' => 'required|integer|min:1',
         ]);
 
-        // Vérifier le stock de chaque burger
+        // Vérifier disponibilité
         foreach ($validated['burgers'] as $item) {
             $burger = Burger::findOrFail($item['id']);
 
             if (!$burger->is_available || $burger->stock < $item['quantity']) {
-                return redirect()->back()
-                    ->with('error', "Le burger {$burger->name} n'est pas disponible en quantité suffisante.");
+                return response()->json([
+                    'message' => "Le burger {$burger->name} n'est pas disponible en quantité suffisante."
+                ], 422);
             }
         }
 
@@ -50,7 +51,6 @@ class CommandeClientController extends Controller
 
         $total = 0;
 
-        // Créer les détails
         foreach ($validated['burgers'] as $item) {
             $burger = Burger::findOrFail($item['id']);
 
@@ -61,26 +61,23 @@ class CommandeClientController extends Controller
                 'unit_price'  => $burger->price,
             ]);
 
-            $burger->decrement('stock', $item['quantity']);
+
             $total += $burger->price * $item['quantity'];
         }
 
-        // Mettre à jour le total
         $commande->update(['total_price' => $total]);
-
-        // Recharger la commande avec ses relations pour les emails
         $commande->load(['user', 'details.burger']);
 
-        // Email confirmation au client
         Mail::to($commande->user->email)
             ->send(new CommandeConfirmationMail($commande));
 
-        // Notification au gestionnaire
         Mail::to(config('mail.manager_email'))
             ->send(new NouvelleCommandeManagerMail($commande));
 
-        return redirect()->route('client.commandes.index')
-            ->with('success', 'Commande passée avec succès.');
+        return response()->json([
+            'commande_id' => $commande->id,
+            'message'     => 'Commande passée avec succès.'
+        ]);
     }
 
     public function show(Commande $commande)

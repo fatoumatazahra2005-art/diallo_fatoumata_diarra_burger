@@ -8,7 +8,7 @@ class CommandeController extends Controller
 {
     public function index()
     {
-        // Récupérer toutes les commandes du client connecté
+
         $commandes = auth()->user()
             ->commandes()
             ->with('details.burger')

@@ -33,6 +33,6 @@
     </div>
 
     <div class="border-t border-gray-700 text-center py-4 text-sm text-gray-500">
-        © {{ date('Y') }} ISI Burger — All rights reserved
+        &copy; {{ date('Y') }} ISI Burger — All rights reserved
     </div>
 </footer>

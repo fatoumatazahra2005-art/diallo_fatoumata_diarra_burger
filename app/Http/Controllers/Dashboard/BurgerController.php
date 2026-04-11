@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Burger;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class BurgerController extends Controller
 {
@@ -36,7 +37,11 @@ class BurgerController extends Controller
         $validated['is_available'] = $request->has('is_available');
 
         if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('burgers', 'public');
+            // Sauvegarder uniquement le nom du fichier
+            $file = $request->file('image');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->storeAs('burgers', $filename, 'public');
+            $validated['image'] = $filename;
         }
 
         Burger::create($validated);
@@ -66,7 +71,19 @@ class BurgerController extends Controller
         $validated['is_available'] = $request->has('is_available');
 
         if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('burgers', 'public');
+            // Supprimer l'ancienne image
+            if ($burger->image) {
+                Storage::disk('public')->delete('burgers/' . $burger->image);
+            }
+
+            // Sauvegarder la nouvelle image
+            $file = $request->file('image');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->storeAs('burgers', $filename, 'public');
+            $validated['image'] = $filename;
+        } else {
+            // Garder l'ancienne image si pas de nouvelle
+            unset($validated['image']);
         }
 
         $burger->update($validated);
@@ -78,7 +95,7 @@ class BurgerController extends Controller
     public function destroy(Burger $burger)
     {
         if ($burger->image) {
-            \Storage::disk('public')->delete($burger->image);
+            Storage::disk('public')->delete('burgers/' . $burger->image);
         }
 
         $burger->delete();

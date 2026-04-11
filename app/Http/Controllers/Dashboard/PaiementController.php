@@ -58,6 +58,15 @@ class PaiementController extends Controller
 
         $commande->update(['status' => 'payee']);
 
+
+        $commande->load(['details.burger']);
+
+        foreach ($commande->details as $detail) {
+            if ($detail->burger) {
+                $detail->burger->decrement('stock', $detail->quantity);
+            }
+        }
+
         return redirect()->route('dashboard.commandes.show', $commande)
             ->with('success', 'Paiement enregistré avec succès.');
     }
